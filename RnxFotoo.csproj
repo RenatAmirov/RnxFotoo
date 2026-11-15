@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
+    <Platforms>x64;ARM64</Platforms>
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == '' and '$(Platform)' == 'ARM64'">win-arm64</RuntimeIdentifier>
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-x64</RuntimeIdentifier>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWinUI>true</UseWinUI>
+    <WindowsPackageType>None</WindowsPackageType>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets/Frame.ico</ApplicationIcon>
+    <PublishTrimmed>false</PublishTrimmed>
+    <DefaultItemExcludes>$(DefaultItemExcludes);artifacts/**</DefaultItemExcludes>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.6.5" />
+    <Content Remove="Assets/**/*.*" />
+    <Content Include="Assets/Preview.jpg;Assets/Frame.ico" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  <!-- Unpackaged WinUI publish can omit the application PRI. See WindowsAppSDK issue #6720. -->
+  <Target Name="AddProjectPriToResolvedFileToPublish" BeforeTargets="ComputeResolvedFilesToPublishList"
+          DependsOnTargets="$(GenerateProjectPriFile)">
+    <ItemGroup Condition="Exists('$(ProjectPriFullPath)')">
+      <ResolvedFileToPublish Include="$(ProjectPriFullPath)" RelativePath="$(ProjectPriFileName)"
+                            CopyToPublishDirectory="PreserveNewest" />
+    </ItemGroup>
+  </Target>
+</Project>
